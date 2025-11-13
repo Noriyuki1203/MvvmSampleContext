@@ -5,19 +5,19 @@ using MvvmSampleContext.Views;
 
 namespace MvvmSampleContext.Services;
 
-public class EditDroneDialogService : IEditDroneDialogService
+public class EditEmployeeDialogService : IEditEmployeeDialogService
 {
-    public DroneRecord? ShowEditDialog(DroneRecord record)
+    public EmployeeRecord? ShowEditDialog(EmployeeRecord record)
     {
-        var window = new EditDroneWindow
+        var window = new EditEmployeeWindow
         {
             Owner = Application.Current?.MainWindow,
         };
 
-        var viewModel = new EditDroneViewModel(record);
+        var viewModel = new EditEmployeeViewModel(record);
         window.DataContext = viewModel;
 
         var dialogResult = window.ShowDialog();
-        return dialogResult == true ? window.Result : null;
+        return dialogResult == true ? viewModel.UpdatedRecord : null;
     }
 }

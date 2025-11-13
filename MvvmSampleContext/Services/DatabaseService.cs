@@ -43,19 +43,19 @@ public class DatabaseService
         var tableCommand = connection.CreateCommand();
         tableCommand.CommandText =
             """
-            CREATE TABLE IF NOT EXISTS Drones
+            CREATE TABLE IF NOT EXISTS Employees
             (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Name TEXT NOT NULL,
-                SerialNumber TEXT NOT NULL,
-                Manufacturer TEXT NOT NULL,
+                EmployeeNumber TEXT NOT NULL,
+                Department TEXT NOT NULL,
                 UpdatedAt TEXT NOT NULL
             );
             """;
         await tableCommand.ExecuteNonQueryAsync();
 
         var countCommand = connection.CreateCommand();
-        countCommand.CommandText = "SELECT COUNT(*) FROM Drones;";
+        countCommand.CommandText = "SELECT COUNT(*) FROM Employees;";
         var count = (long)(await countCommand.ExecuteScalarAsync() ?? 0);
 
         _isInitialized = true;
@@ -65,25 +65,25 @@ public class DatabaseService
             var now = DateTime.UtcNow;
             var seed = new[]
             {
-                new DroneRecord
+                new EmployeeRecord
                 {
-                    Name = "Surveyor X1",
-                    SerialNumber = "SRV-001",
-                    Manufacturer = "Contoso Drones",
+                    Name = "山田 太郎",
+                    EmployeeNumber = "EMP-001",
+                    Department = "営業部",
                     UpdatedAt = now,
                 },
-                new DroneRecord
+                new EmployeeRecord
                 {
-                    Name = "Logistics Pro",
-                    SerialNumber = "LOG-204",
-                    Manufacturer = "Northwind Robotics",
+                    Name = "佐藤 花子",
+                    EmployeeNumber = "EMP-002",
+                    Department = "開発部",
                     UpdatedAt = now,
                 },
-                new DroneRecord
+                new EmployeeRecord
                 {
-                    Name = "Rescue Scout",
-                    SerialNumber = "RSC-778",
-                    Manufacturer = "Adventure Works Aerospace",
+                    Name = "中村 健",
+                    EmployeeNumber = "EMP-003",
+                    Department = "人事部",
                     UpdatedAt = now,
                 },
             };
@@ -95,11 +95,11 @@ public class DatabaseService
         }
     }
 
-    public async Task<IReadOnlyList<DroneRecord>> GetAllAsync()
+    public async Task<IReadOnlyList<EmployeeRecord>> GetAllAsync()
     {
         await InitializeAsync();
 
-        var items = new List<DroneRecord>();
+        var items = new List<EmployeeRecord>();
 
         await using var connection = new SqliteConnection(_connectionString);
         await connection.OpenAsync();
@@ -107,20 +107,20 @@ public class DatabaseService
         var command = connection.CreateCommand();
         command.CommandText =
             """
-            SELECT Id, Name, SerialNumber, Manufacturer, UpdatedAt
-            FROM Drones
+            SELECT Id, Name, EmployeeNumber, Department, UpdatedAt
+            FROM Employees
             ORDER BY Name COLLATE NOCASE;
             """;
 
         await using var reader = await command.ExecuteReaderAsync();
         while (await reader.ReadAsync())
         {
-            items.Add(new DroneRecord
+            items.Add(new EmployeeRecord
             {
                 Id = reader.GetInt32(0),
                 Name = reader.GetString(1),
-                SerialNumber = reader.GetString(2),
-                Manufacturer = reader.GetString(3),
+                EmployeeNumber = reader.GetString(2),
+                Department = reader.GetString(3),
                 UpdatedAt = DateTime.Parse(reader.GetString(4), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind),
             });
         }
@@ -128,7 +128,7 @@ public class DatabaseService
         return items;
     }
 
-    public async Task<int> InsertAsync(DroneRecord record)
+    public async Task<int> InsertAsync(EmployeeRecord record)
     {
         await InitializeAsync();
 
@@ -140,14 +140,14 @@ public class DatabaseService
         var command = connection.CreateCommand();
         command.CommandText =
             """
-            INSERT INTO Drones (Name, SerialNumber, Manufacturer, UpdatedAt)
-            VALUES ($name, $serial, $manufacturer, $updatedAt);
+            INSERT INTO Employees (Name, EmployeeNumber, Department, UpdatedAt)
+            VALUES ($name, $number, $department, $updatedAt);
             SELECT last_insert_rowid();
             """;
 
         command.Parameters.AddWithValue("$name", record.Name);
-        command.Parameters.AddWithValue("$serial", record.SerialNumber);
-        command.Parameters.AddWithValue("$manufacturer", record.Manufacturer);
+        command.Parameters.AddWithValue("$number", record.EmployeeNumber);
+        command.Parameters.AddWithValue("$department", record.Department);
         command.Parameters.AddWithValue("$updatedAt", record.UpdatedAt.ToString("O"));
 
         var result = await command.ExecuteScalarAsync();
@@ -157,7 +157,7 @@ public class DatabaseService
         return id;
     }
 
-    public async Task UpdateAsync(DroneRecord record)
+    public async Task UpdateAsync(EmployeeRecord record)
     {
         await InitializeAsync();
 
@@ -169,17 +169,17 @@ public class DatabaseService
         var command = connection.CreateCommand();
         command.CommandText =
             """
-            UPDATE Drones
+            UPDATE Employees
             SET Name = $name,
-                SerialNumber = $serial,
-                Manufacturer = $manufacturer,
+                EmployeeNumber = $number,
+                Department = $department,
                 UpdatedAt = $updatedAt
             WHERE Id = $id;
             """;
 
         command.Parameters.AddWithValue("$name", record.Name);
-        command.Parameters.AddWithValue("$serial", record.SerialNumber);
-        command.Parameters.AddWithValue("$manufacturer", record.Manufacturer);
+        command.Parameters.AddWithValue("$number", record.EmployeeNumber);
+        command.Parameters.AddWithValue("$department", record.Department);
         command.Parameters.AddWithValue("$updatedAt", record.UpdatedAt.ToString("O"));
         command.Parameters.AddWithValue("$id", record.Id);
 
@@ -192,6 +192,6 @@ public class DatabaseService
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "MvvmSampleContext");
         Directory.CreateDirectory(folder);
-        return Path.Combine(folder, "drones.db");
+        return Path.Combine(folder, "employees.db");
     }
 }

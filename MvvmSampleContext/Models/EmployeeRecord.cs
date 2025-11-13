@@ -2,15 +2,15 @@ using System;
 
 namespace MvvmSampleContext.Models;
 
-public class DroneRecord : ICloneable
+public class EmployeeRecord : ICloneable
 {
     public int Id { get; set; }
 
     public string Name { get; set; } = string.Empty;
 
-    public string SerialNumber { get; set; } = string.Empty;
+    public string EmployeeNumber { get; set; } = string.Empty;
 
-    public string Manufacturer { get; set; } = string.Empty;
+    public string Department { get; set; } = string.Empty;
 
     public DateTime UpdatedAt { get; set; }
 
@@ -21,6 +21,6 @@ public class DroneRecord : ICloneable
 
     public override string ToString()
     {
-        return Name;
+        return $"{Name} ({EmployeeNumber})";
     }
 }

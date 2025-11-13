@@ -5,7 +5,7 @@ namespace MvvmSampleContext.ViewModels;
 
 public class DialogCloseRequestedEventArgs : EventArgs
 {
-    public DialogCloseRequestedEventArgs(bool dialogResult, DroneRecord? updatedRecord)
+    public DialogCloseRequestedEventArgs(bool dialogResult, EmployeeRecord? updatedRecord)
     {
         DialogResult = dialogResult;
         UpdatedRecord = updatedRecord;
@@ -13,5 +13,5 @@ public class DialogCloseRequestedEventArgs : EventArgs
 
     public bool DialogResult { get; }
 
-    public DroneRecord? UpdatedRecord { get; }
+    public EmployeeRecord? UpdatedRecord { get; }
 }

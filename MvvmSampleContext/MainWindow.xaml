@@ -4,66 +4,66 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="ドローン一覧"
+        Title="従業員一覧"
         Height="450"
         Width="800"
         Loaded="MainWindow_OnLoaded">
     <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Window.Resources>
     <Grid Margin="16">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0"
               Margin="0,0,0,8">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="ドローン一覧"
+            <TextBlock Text="従業員一覧"
                        FontSize="20"
                        FontWeight="Bold"
-                       VerticalAlignment="Center"/>
+                       VerticalAlignment="Center" />
             <Button Grid.Column="1"
                     Width="120"
                     Content="再読み込み"
-                    Command="{Binding LoadCommand}"/>
+                    Command="{Binding LoadCommand}" />
         </Grid>
 
         <DataGrid Grid.Row="1"
-                  ItemsSource="{Binding Drones}"
-                  SelectedItem="{Binding SelectedDrone, Mode=TwoWay}"
+                  ItemsSource="{Binding Employees}"
+                  SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
                   Margin="0,0,0,8">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="名前"
                                     Binding="{Binding Name}"
-                                    Width="*"/>
-                <DataGridTextColumn Header="シリアル"
-                                    Binding="{Binding SerialNumber}"
-                                    Width="160"/>
-                <DataGridTextColumn Header="メーカー"
-                                    Binding="{Binding Manufacturer}"
-                                    Width="160"/>
+                                    Width="*" />
+                <DataGridTextColumn Header="社員番号"
+                                    Binding="{Binding EmployeeNumber}"
+                                    Width="160" />
+                <DataGridTextColumn Header="部署"
+                                    Binding="{Binding Department}"
+                                    Width="160" />
                 <DataGridTextColumn Header="更新日時"
                                     Binding="{Binding UpdatedAt, StringFormat=\{0:yyyy/MM/dd HH:mm\}}"
-                                    Width="180"/>
+                                    Width="180" />
             </DataGrid.Columns>
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Setter Property="Tag"
-                            Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                            Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
                     <Setter Property="ContextMenu">
                         <Setter.Value>
                             <ContextMenu>
                                 <MenuItem Header="編集..."
                                           Command="{Binding PlacementTarget.Tag.EditCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                          CommandParameter="{Binding}"/>
+                                          CommandParameter="{Binding}" />
                             </ContextMenu>
                         </Setter.Value>
                     </Setter>
@@ -73,11 +73,11 @@
 
         <StatusBar Grid.Row="2">
             <StatusBarItem>
-                <TextBlock Text="{Binding SelectedDrone, StringFormat=選択: {0}, TargetNullValue=選択: なし}"/>
+                <TextBlock Text="{Binding SelectedEmployee, StringFormat=選択: {0}, TargetNullValue=選択: なし}" />
             </StatusBarItem>
             <StatusBarItem>
                 <TextBlock Text="読込中..."
-                           Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                           Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StatusBarItem>
         </StatusBar>
     </Grid>

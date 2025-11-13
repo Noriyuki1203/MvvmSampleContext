@@ -10,21 +10,21 @@ namespace MvvmSampleContext.ViewModels;
 public partial class MainViewModel : ObservableObject
 {
     private readonly DatabaseService _databaseService;
-    private readonly IEditDroneDialogService _dialogService;
+    private readonly IEditEmployeeDialogService _dialogService;
 
     [ObservableProperty]
-    private DroneRecord? selectedDrone;
+    private EmployeeRecord? selectedEmployee;
 
     [ObservableProperty]
     private bool isBusy;
 
-    public MainViewModel(DatabaseService databaseService, IEditDroneDialogService dialogService)
+    public MainViewModel(DatabaseService databaseService, IEditEmployeeDialogService dialogService)
     {
         _databaseService = databaseService;
         _dialogService = dialogService;
     }
 
-    public ObservableCollection<DroneRecord> Drones { get; } = new();
+    public ObservableCollection<EmployeeRecord> Employees { get; } = new();
 
     [RelayCommand]
     private async Task LoadAsync()
@@ -39,10 +39,10 @@ public partial class MainViewModel : ObservableObject
         try
         {
             var items = await _databaseService.GetAllAsync();
-            Drones.Clear();
+            Employees.Clear();
             foreach (var item in items)
             {
-                Drones.Add(item);
+                Employees.Add(item);
             }
         }
         finally
@@ -52,17 +52,16 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    //[RelayCommand(CanExecute = nameof(CanEdit))]
-    [RelayCommand]
-    private async Task EditAsync(DroneRecord? record)
+    [RelayCommand(CanExecute = nameof(CanEdit))]
+    private async Task EditAsync(EmployeeRecord? record)
     {
-        var target = record ?? SelectedDrone;
+        var target = record ?? SelectedEmployee;
         if (target is null)
         {
             return;
         }
 
-        var editable = (DroneRecord)target.Clone();
+        var editable = (EmployeeRecord)target.Clone();
         var updated = _dialogService.ShowEditDialog(editable);
         if (updated is null)
         {
@@ -74,12 +73,12 @@ public partial class MainViewModel : ObservableObject
         await LoadAsync();
     }
 
-    private bool CanEdit(DroneRecord? record)
+    private bool CanEdit(EmployeeRecord? record)
     {
-        return record is not null || SelectedDrone is not null;
+        return record is not null || SelectedEmployee is not null;
     }
 
-    partial void OnSelectedDroneChanged(DroneRecord? value)
+    partial void OnSelectedEmployeeChanged(EmployeeRecord? value)
     {
         EditCommand.NotifyCanExecuteChanged();
     }

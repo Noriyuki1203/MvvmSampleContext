@@ -14,7 +14,7 @@ public partial class App : Application
         base.OnStartup(e);
 
         var databaseService = new DatabaseService();
-        var dialogService = new EditDroneDialogService();
+        var dialogService = new EditEmployeeDialogService();
         var mainViewModel = new MainViewModel(databaseService, dialogService);
 
         var window = new MainWindow
