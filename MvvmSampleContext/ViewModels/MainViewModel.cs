@@ -1,7 +1,9 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MvvmSampleContext.Exceptions;
 using MvvmSampleContext.Models;
 using MvvmSampleContext.Services;
 
@@ -45,6 +47,14 @@ public partial class MainViewModel : ObservableObject
                 Employees.Add(item);
             }
         }
+        catch (DataAccessException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new BusinessException("従業員一覧の読み込みに失敗しました。", ex);
+        }
         finally
         {
             IsBusy = false;
@@ -61,16 +71,31 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        var editable = (EmployeeRecord)target.Clone();
-        var updated = _dialogService.ShowEditDialog(editable);
-        if (updated is null)
+        try
         {
-            return;
-        }
+            var editable = (EmployeeRecord)target.Clone();
+            var updated = _dialogService.ShowEditDialog(editable);
+            if (updated is null)
+            {
+                return;
+            }
 
-        updated.Id = target.Id;
-        await _databaseService.UpdateAsync(updated);
-        await LoadAsync();
+            updated.Id = target.Id;
+            await _databaseService.UpdateAsync(updated);
+            await LoadAsync();
+        }
+        catch (BusinessException)
+        {
+            throw;
+        }
+        catch (DataAccessException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new BusinessException("従業員情報の更新に失敗しました。", ex);
+        }
     }
 
     private bool CanEdit(EmployeeRecord? record)
