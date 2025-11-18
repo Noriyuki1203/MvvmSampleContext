@@ -24,8 +24,10 @@ public partial class App : Application
         base.OnStartup(e);
 
         var databaseService = new DatabaseService();
-        var dialogService = new EditEmployeeDialogService();
-        var mainViewModel = new MainViewModel(databaseService, dialogService);
+        var employeeDialogService = new EditEmployeeDialogService();
+        var departmentDialogService = new EditDepartmentDialogService();
+        var familyDialogService = new EditFamilyDialogService();
+        var mainViewModel = new MainViewModel(databaseService, employeeDialogService, departmentDialogService, familyDialogService);
 
         var window = new MainWindow
         {

@@ -4,27 +4,29 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="従業員一覧"
-        Height="450"
-        Width="800"
+        Title="部署・従業員・家族一覧"
+        Height="600"
+        Width="1100"
         Loaded="MainWindow_OnLoaded">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Window.Resources>
+
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0"
-              Margin="0,0,0,8">
+              Margin="0,0,0,12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="従業員一覧"
+            <TextBlock Text="部署・従業員・家族一覧"
                        FontSize="20"
                        FontWeight="Bold"
                        VerticalAlignment="Center" />
@@ -34,46 +36,175 @@
                     Command="{Binding LoadCommand}" />
         </Grid>
 
-        <DataGrid Grid.Row="1"
-                  ItemsSource="{Binding Employees}"
-                  SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  Margin="0,0,0,8">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="名前"
-                                    Binding="{Binding Name}"
-                                    Width="*" />
-                <DataGridTextColumn Header="社員番号"
-                                    Binding="{Binding EmployeeNumber}"
-                                    Width="160" />
-                <DataGridTextColumn Header="部署"
-                                    Binding="{Binding Department}"
-                                    Width="160" />
-                <DataGridTextColumn Header="更新日時"
-                                    Binding="{Binding UpdatedAt, StringFormat=\{0:yyyy/MM/dd HH:mm\}}"
-                                    Width="180" />
-            </DataGrid.Columns>
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Setter Property="Tag"
-                            Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
-                    <Setter Property="ContextMenu">
-                        <Setter.Value>
-                            <ContextMenu>
-                                <MenuItem Header="編集..."
-                                          Command="{Binding PlacementTarget.Tag.EditCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                          CommandParameter="{Binding}" />
-                            </ContextMenu>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </DataGrid.RowStyle>
-        </DataGrid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
 
-        <StatusBar Grid.Row="2">
+            <!-- 部署 -->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0"
+                           Text="部署"
+                           FontWeight="Bold"
+                           Margin="0,0,0,6" />
+                <DataGrid Grid.Row="1"
+                          ItemsSource="{Binding Departments}"
+                          SelectedItem="{Binding SelectedDepartment, Mode=TwoWay}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="部署名"
+                                            Binding="{Binding Name}"
+                                            Width="*" />
+                    </DataGrid.Columns>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Tag"
+                                    Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
+                            <Setter Property="ContextMenu">
+                                <Setter.Value>
+                                    <ContextMenu>
+                                        <MenuItem Header="削除"
+                                                  Command="{Binding PlacementTarget.Tag.DeleteDepartmentCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  CommandParameter="{Binding}" />
+                                    </ContextMenu>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DataGrid.RowStyle>
+                </DataGrid>
+            </Grid>
+
+            <!-- 従業員 -->
+            <Grid Grid.Column="1"
+                  Margin="12,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0"
+                           Text="従業員"
+                           FontWeight="Bold"
+                           Margin="0,0,0,6" />
+                <DataGrid Grid.Row="1"
+                          ItemsSource="{Binding Employees}"
+                          SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="名前"
+                                            Binding="{Binding Name}"
+                                            Width="*" />
+                        <DataGridTextColumn Header="社員番号"
+                                            Binding="{Binding EmployeeNumber}"
+                                            Width="150" />
+                        <DataGridTextColumn Header="部署"
+                                            Binding="{Binding Department}"
+                                            Width="140" />
+                        <DataGridTextColumn Header="更新日時"
+                                            Binding="{Binding UpdatedAt, StringFormat=\{0:yyyy/MM/dd HH:mm\}}"
+                                            Width="180" />
+                    </DataGrid.Columns>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Tag"
+                                    Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
+                            <Setter Property="ContextMenu">
+                                <Setter.Value>
+                                    <ContextMenu>
+                                        <MenuItem Header="編集..."
+                                                  Command="{Binding PlacementTarget.Tag.EditCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  CommandParameter="{Binding}" />
+                                        <Separator />
+                                        <MenuItem Header="削除"
+                                                  Command="{Binding PlacementTarget.Tag.DeleteEmployeeCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  CommandParameter="{Binding}" />
+                                    </ContextMenu>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DataGrid.RowStyle>
+                </DataGrid>
+            </Grid>
+
+            <!-- 家族 -->
+            <Grid Grid.Column="2"
+                  Margin="12,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0"
+                           Text="家族"
+                           FontWeight="Bold"
+                           Margin="0,0,0,6" />
+                <DataGrid Grid.Row="1"
+                          ItemsSource="{Binding Families}"
+                          SelectedItem="{Binding SelectedFamily, Mode=TwoWay}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="名前"
+                                            Binding="{Binding Name}"
+                                            Width="*" />
+                        <DataGridTextColumn Header="続柄"
+                                            Binding="{Binding Relationship}"
+                                            Width="120" />
+                        <DataGridTextColumn Header="年齢"
+                                            Binding="{Binding Age}"
+                                            Width="80" />
+                    </DataGrid.Columns>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Tag"
+                                    Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
+                            <Setter Property="ContextMenu">
+                                <Setter.Value>
+                                    <ContextMenu>
+                                        <MenuItem Header="削除"
+                                                  Command="{Binding PlacementTarget.Tag.DeleteFamilyCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                  CommandParameter="{Binding}" />
+                                    </ContextMenu>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DataGrid.RowStyle>
+                </DataGrid>
+            </Grid>
+        </Grid>
+
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,12,0,8">
+            <Button Content="部署入力画面"
+                    Width="140"
+                    Margin="0,0,8,0"
+                    Command="{Binding OpenDepartmentInputAsyncCommand}" />
+            <Button Content="従業員入力画面"
+                    Width="140"
+                    Margin="0,0,8,0"
+                    Command="{Binding OpenEmployeeInputAsyncCommand}" />
+            <Button Content="家族入力画面"
+                    Width="140"
+                    Command="{Binding OpenFamilyInputAsyncCommand}" />
+        </StackPanel>
+
+        <StatusBar Grid.Row="3">
             <StatusBarItem>
-                <TextBlock Text="{Binding SelectedEmployee, StringFormat=選択: {0}, TargetNullValue=選択: なし}" />
+                <TextBlock Text="{Binding SelectedDepartment, StringFormat=部署: {0}, TargetNullValue=部署: なし}" />
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock Text="{Binding SelectedEmployee, StringFormat=従業員: {0}, TargetNullValue=従業員: なし}" />
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock Text="{Binding SelectedFamily, StringFormat=家族: {0}, TargetNullValue=家族: なし}" />
             </StatusBarItem>
             <StatusBarItem>
                 <TextBlock Text="読込中..."
